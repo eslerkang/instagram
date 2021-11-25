@@ -8,7 +8,7 @@ def validate_email(email):
     EmailValidator(message='INVALID_EMAIL')(email)
 
 def validate_name(name):
-    if len(name) < 3:
+    if len(name) < 2:
         raise ValidationError('NAME_TOO_SHORT')
     if len(name) > 15:
         raise ValidationError('NAME_TOO_LONG')
