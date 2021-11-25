@@ -20,15 +20,18 @@ class SignupView(View):
         try:
             data = json.loads(request.body)
 
-            name = data['name']
-            email = data['email']
+            name     = data['name']
+            email    = data['email']
             password = data['password']
-            contact = data['contact']
-            mbti = data.get('mbti', '')
-            gender = data['gender']
+            contact  = data['contact']
+            mbti     = data.get('mbti', '')
+            gender   = data['gender']
 
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'MESSAGE': 'EMAIL_ALREADY_EXIST'}, status=400)
+
+            if User.objects.filter(contact=contact).exists():
+                return JsonResponse({'MESSAGE': 'CONTACT_ALREADY_EXIST'}, status=400)
 
             validate_name(name)
             validate_email(email)
