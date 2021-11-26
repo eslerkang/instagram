@@ -28,18 +28,18 @@ class SignupView(View):
             mbti     = data.get('mbti', '')
             gender   = data['gender']
 
-            if User.objects.filter(email=email).exists():
-                return JsonResponse({'MESSAGE': 'EMAIL_ALREADY_EXIST'}, status=400)
-
-            if User.objects.filter(contact=contact).exists():
-                return JsonResponse({'MESSAGE': 'CONTACT_ALREADY_EXIST'}, status=400)
-
             validate_name(name)
             validate_email(email)
             validate_password(password)
             validate_contact(contact)
             validate_mbti(mbti)
             validate_gender(gender)
+
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({'MESSAGE': 'EMAIL_ALREADY_EXIST'}, status=400)
+
+            if User.objects.filter(contact=contact).exists():
+                return JsonResponse({'MESSAGE': 'CONTACT_ALREADY_EXIST'}, status=400)
 
             hashed_password = bcrypt.hashpw(
                 password.encode('utf-8'),
