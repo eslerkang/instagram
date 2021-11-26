@@ -5,9 +5,9 @@ from django.views           import View
 from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
 
-from my_settings      import SECRET_KEY, ALGORITHM
-from users.models     import User
-from core.validations import (
+from my_settings            import SECRET_KEY, ALGORITHM
+from users.models           import User
+from core.validations       import (
     validate_email,
     validate_password,
     validate_name,
@@ -73,10 +73,14 @@ class SignupView(View):
 class SigninView(View):
     def post(self, request):
         try:
-            data                  = json.loads(request.body)
+            data     = json.loads(request.body)
 
-            email                 = data['email']
-            password              = data['password']
+            email    = data['email']
+            password = data['password']
+
+            validate_email(email)
+            validate_password(password)
+
             encoded_password      = password.encode('utf-8')
 
             user                  = User.objects.get(email=email)
@@ -98,6 +102,9 @@ class SigninView(View):
 
         except KeyError:
             return JsonResponse({'MESSAGE': 'KEY_ERROR'}, status=400)
+
+        except ValidationError as e:
+            return JsonResponse({'MESSAGE': e.message}, status=400)
 
         except User.DoesNotExist:
             return JsonResponse({'MESSAGE': 'INVALID_EMAIL'}, status=401)
