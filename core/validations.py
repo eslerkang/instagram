@@ -1,4 +1,4 @@
-from django.core.validators import EmailValidator, RegexValidator
+from django.core.validators import EmailValidator, RegexValidator, URLValidator
 from django.core.exceptions import ValidationError
 
 PASSWORD_REGEX      = '''^.*(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!"#$%&'()*+,\-./:;<=>?@[＼\]^_`{|}~\\)])[\w!"#$%&'()*+,\-./:;<=>?@[＼\]^`{|}~\\)]{8,}$'''
@@ -13,6 +13,7 @@ PASSWORD_MIN_LENGTH = 8
 PASSWORD_MAX_LENGTH = 45
 CONTACT_MIN_LENGTH  = 12
 CONTACT_MAX_LENGTH  = 19
+URL_MAX_LENGTH      = 2048
 
 def validate_email(email):
     if type(email) is not str:
@@ -70,3 +71,12 @@ def validate_gender(gender):
 
     if gender not in GENDER_LIST:
         raise ValidationError('INVALID_GENDER')
+
+def validate_url(url):
+    if type(url) is not str:
+        raise ValidationError('URL_MOST_BE_STR')
+
+    if len(url) > URL_MAX_LENGTH:
+        raise ValidationError('URL_TOO_LONG')
+
+    URLValidator(message='INVALID_URL')(url)
