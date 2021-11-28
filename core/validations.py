@@ -17,7 +17,7 @@ URL_MAX_LENGTH      = 2048
 
 def validate_email(email):
     if type(email) is not str:
-        raise ValidationError('EMAIL_MOST_BE_STR')
+        raise ValidationError('EMAIL_MUST_BE_STR')
     if len(email) > EMAIL_MAX_LENGTH:
         raise ValidationError('EMAIL_TOO_LONG')
 
@@ -25,7 +25,7 @@ def validate_email(email):
 
 def validate_name(name):
     if type(name) is not str:
-        raise ValidationError('NAME_MOST_BE_STR')
+        raise ValidationError('NAME_MUST_BE_STR')
     if len(name) < NAME_MIN_LENGTH:
         raise ValidationError('NAME_TOO_SHORT')
 
@@ -34,7 +34,7 @@ def validate_name(name):
 
 def validate_password(password):
     if type(password) is not str:
-        raise ValidationError('PASSWORD_MOST_BE_STR')
+        raise ValidationError('PASSWORD_MUST_BE_STR')
 
     if len(password) < PASSWORD_MIN_LENGTH:
         raise ValidationError('PASSWORD_TOO_SHORT')
@@ -46,7 +46,7 @@ def validate_password(password):
 
 def validate_contact(contact):
     if type(contact) is not str:
-        raise ValidationError('CONTACT_MOST_BE_STR')
+        raise ValidationError('CONTACT_MUST_BE_STR')
 
     if len(contact) < CONTACT_MIN_LENGTH:
         raise ValidationError('CONTACT_TOO_SHORT')
@@ -58,7 +58,7 @@ def validate_contact(contact):
 
 def validate_mbti(mbti):
     if type(MBTI) is not str:
-        raise ValidationError('MBTI_MOST_BE_STR')
+        raise ValidationError('MBTI_MUST_BE_STR')
 
     if mbti == '':
         return
@@ -67,16 +67,28 @@ def validate_mbti(mbti):
 
 def validate_gender(gender):
     if type(gender) is not str:
-        raise ValidationError('GENDER_MOST_BE_STR')
+        raise ValidationError('GENDER_MUST_BE_STR')
 
     if gender not in GENDER_LIST:
         raise ValidationError('INVALID_GENDER')
 
 def validate_url(url):
     if type(url) is not str:
-        raise ValidationError('URL_MOST_BE_STR')
+        raise ValidationError('URL_MUST_BE_STR')
 
     if len(url) > URL_MAX_LENGTH:
         raise ValidationError('URL_TOO_LONG')
 
     URLValidator(message='INVALID_URL')(url)
+
+def validate_content(content, min_length, max_length):
+    if type(content) is not str:
+        raise ValidationError(message='CONTENT_MUST_BE_STR')
+
+    len_content = len(content)
+
+    if len_content < min_length:
+        raise ValidationError(message='CONTENT_TOO_SHORT')
+
+    if len_content > max_length:
+        raise ValidationError(message='CONTENT_TOO_LONG')
