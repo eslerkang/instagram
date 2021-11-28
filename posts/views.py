@@ -50,7 +50,7 @@ class PostView(View):
     def get(self, request):
         results = []
         posts   = Post.objects.prefetch_related(
-            'image_set, comment_set'
+            'image_set', 'comment_set'
         ).annotate(
             user_name=F('user__name')
         )
