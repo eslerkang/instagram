@@ -12,6 +12,7 @@ class User(TimeStampModel):
     gender   = models.CharField(max_length=9)
     follow   = models.ManyToManyField(
         'self',
+        related_name='followed',
         symmetrical=False,
         through='Follow',
         through_fields=('follower', 'following')
@@ -25,9 +26,8 @@ class User(TimeStampModel):
 
 
 class Follow(TimeStampModel):
-    follower  = models.ForeignKey('User', on_delete=models.CASCADE, related_name='follower')
-    following = models.ForeignKey('User', on_delete=models.CASCADE, related_name='following')
-    is_bf     = models.BooleanField(default=False)
+    follower  = models.ForeignKey('User', on_delete=models.CASCADE, related_name='following')
+    following = models.ForeignKey('User', on_delete=models.CASCADE, related_name='follower')
 
     class Meta:
         db_table = 'follows'
