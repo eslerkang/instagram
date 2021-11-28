@@ -3,6 +3,7 @@ import json
 from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ValidationError
+from django.db.models       import F
 
 from core.validations import validate_url, validate_content
 from core.utils       import authorization
@@ -13,9 +14,7 @@ class PostView(View):
     def post(self, request):
         try:
             data    = json.loads(request.body)
-
             user    = request.user
-
             images  = data['images']
             content = data['content']
 
@@ -27,8 +26,7 @@ class PostView(View):
 
             validate_content(content, 0, 2048)
 
-            post = Post(user=user, content=content)
-
+            post       = Post(user=user, content=content)
             image_list = []
 
             for image in images:
@@ -48,4 +46,19 @@ class PostView(View):
 
         except ValidationError as e:
             return JsonResponse({'MESSAGE': e.message}, status=400)
+
+    def get(self, request):
+        results = []
+        posts   = Post.objects.prefetch_related('image_set').annotate(
+            user_name=F('user__name')
+        )
+
+        for post, post_query in zip(
+                posts.values('content', 'created_at', 'user_name'),
+                posts
+        ):
+            post['images'] = list(post_query.image_set.values('url'))
+            results.append(post)
+
+        return JsonResponse({'MESSAGE': results}, status=200)
 
