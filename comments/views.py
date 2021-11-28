@@ -19,7 +19,7 @@ class CommentView(View):
             content = data['content']
             post_id = data['post_id']
 
-            validate_content(content, 0, 1500)
+            validate_content(content, 1, 1500)
 
             post = Post.objects.get(id=post_id)
 
