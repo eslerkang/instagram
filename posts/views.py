@@ -72,3 +72,23 @@ class PostView(View):
 
         return JsonResponse({'MESSAGE': results}, status=200)
 
+    @authorization
+    def delete(self, request):
+        post_id = request.GET.get('post_id')
+        user    = request.user
+
+        try:
+            post = Post.objects.get(id=post_id)
+
+            if post.user_id != user.id:
+                return JsonResponse({'MESSAGE':'AUTHENTICATION_ERROR'}, status=401)
+
+            post.delete()
+
+            return JsonResponse({'MESSAGE': 'POST_DELETE_SUCCESS'}, status=200)
+
+        except ValueError:
+            return JsonResponse({'MESSAGE': 'INVALID_POST_ID'}, status=400)
+
+        except Post.DoesNotExist:
+            return JsonResponse({'MESSAGE': 'POST_NOT_FOUND'}, status=400)
