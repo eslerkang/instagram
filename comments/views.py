@@ -41,3 +41,25 @@ class CommentView(View):
 
         except Post.DoesNotExist:
             return JsonResponse({'MESSAGE': 'POST_NOT_FOUND'}, status=400)
+
+    @authorization
+    def delete(self, request):
+        comment_id = request.GET.get('comment_id')
+        user       = request.user
+        try:
+            if not comment_id:
+                return JsonResponse({'MESSAGE': 'COMMENT_ID_REQUIRED'}, status=400)
+
+            comment = Comment.objects.get(id=comment_id)
+
+            if comment.user_id != user.id:
+                return JsonResponse({'MESSAGE': 'AUTHENTICATION_ERROR'}, status=401)
+
+            comment.delete()
+            return JsonResponse({'MESSAGE': 'COMMENT_DELETE_SUCCESS'}, status=200)
+
+        except ValueError:
+            return JsonResponse({'MESSAGE': 'INVALID_COMMENT_ID'}, status=400)
+
+        except Comment.DoesNotExist:
+            return JsonResponse({'MESSAGE': 'COMMENT_NOT_FOUND'}, status=400)
