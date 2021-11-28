@@ -3,8 +3,9 @@ from django.db   import models
 from core.models import TimeStampModel
 
 class Post(TimeStampModel):
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
-    content = models.CharField(max_length=1500, blank=True)
+    user       = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    content    = models.CharField(max_length=1500, blank=True)
+    liked_user = models.ManyToManyField('users.User', through='likes.Like', related_name='liked_post')
 
     class Meta:
         db_table = 'posts'
