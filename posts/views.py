@@ -1,7 +1,8 @@
 import json
 
-from django.http      import JsonResponse
-from django.views     import View
+from django.http            import JsonResponse
+from django.views           import View
+from django.core.exceptions import ValidationError
 
 from core.validations import validate_url, validate_content
 from core.utils       import authorization
@@ -27,16 +28,15 @@ class PostView(View):
             validate_content(content, 0, 2048)
 
             post = Post(user=user, content=content)
-            post.save()
 
-            imgae_list = []
+            image_list = []
 
             for image in images:
                 validate_url(image)
-                image_list.append(Image(url=image))
+                image_list.append(Image(url=image, post=post))
 
-            post.image_set.set(image_list)
             post.save()
+            Image.objects.bulk_create(image_list)
 
             return JsonResponse({'MESSAGE': 'CREATED'}, status=201)
 
