@@ -7,7 +7,7 @@ from my_settings  import SECRET_KEY, ALGORITHM
 def authorization(func):
     def wrapper(self, request, *args, **kwargs):
         try:
-            bearer_token = request.header.get('Authorization')
+            bearer_token = request.headers.get('Authorization')
 
             if not bearer_token:
                 return JsonResponse({'MESSAGE': 'TOKEN_REQUIRED'}, status=401)
