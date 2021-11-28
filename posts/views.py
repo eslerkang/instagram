@@ -3,7 +3,7 @@ import json
 from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ValidationError
-from django.db.models       import F
+from django.db.models       import F, Count
 
 from core.validations import validate_url, validate_content
 from core.utils       import authorization
@@ -53,19 +53,21 @@ class PostView(View):
     def get(self, request):
         results = []
         posts   = Post.objects.prefetch_related(
-            'image_set', 'comment_set'
+            'image_set', 'comment_set', 'liked_user'
         ).annotate(
-            user_name=F('user__name')
+            user_name  = F('user__name'),
+            like_count = Count('liked_user')
         )
 
         for post, post_query in zip(
-                posts.values('content', 'created_at', 'user_name'),
+                posts.values('content', 'created_at', 'user_name', 'like_count'),
                 posts
         ):
             post['images']   = list(post_query.image_set.values('url'))
             post['comments'] = list(post_query.comment_set.annotate(
                 user_name=F('user__name')
             ).values('user_name', 'content'))
+            post['likes']    = list(post_query.liked_user.values('name'))
             results.append(post)
 
         return JsonResponse({'MESSAGE': results}, status=200)
