@@ -49,7 +49,9 @@ class PostView(View):
 
     def get(self, request):
         results = []
-        posts   = Post.objects.prefetch_related('image_set').annotate(
+        posts   = Post.objects.prefetch_related(
+            'image_set, comment_set'
+        ).annotate(
             user_name=F('user__name')
         )
 
@@ -57,7 +59,10 @@ class PostView(View):
                 posts.values('content', 'created_at', 'user_name'),
                 posts
         ):
-            post['images'] = list(post_query.image_set.values('url'))
+            post['images']   = list(post_query.image_set.values('url'))
+            post['comments'] = list(post_query.comment_set.annotate(
+                user_name=F('user__name')
+            ).values('user_name', 'content'))
             results.append(post)
 
         return JsonResponse({'MESSAGE': results}, status=200)
