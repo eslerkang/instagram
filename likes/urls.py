@@ -1,5 +1,7 @@
 from django.urls import path
 
-urlpatterns = [
+from likes.views import LikeView
 
+urlpatterns = [
+    path('', LikeView.as_view()),
 ]
