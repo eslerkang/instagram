@@ -10,9 +10,24 @@ class User(TimeStampModel):
     contact  = models.CharField(max_length=19, unique=True)
     mbti     = models.CharField(max_length=4, blank=True)
     gender   = models.CharField(max_length=9)
+    follow   = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        through='Follow',
+        through_fields=('follower', 'following')
+    )
 
     class Meta:
         db_table = 'users'
 
     def __str__(self):
         return self.name
+
+
+class Follow(TimeStampModel):
+    follower  = models.ForeignKey('User', on_delete=models.CASCADE, related_name='follower')
+    following = models.ForeignKey('User', on_delete=models.CASCADE, related_name='following')
+    is_bf     = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'follows'
