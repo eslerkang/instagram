@@ -24,6 +24,9 @@ class PostView(View):
             if type(content) is not str:
                 return JsonResponse({'MESSAGE': 'CONTENT_MUST_BE_STR'}, status=400)
 
+            if len(images) < 1:
+                return JsonResponse({'MESSAGE': 'IMAGE_REQUIRED'}, status=400)
+
             validate_content(content, 0, 1500)
 
             post       = Post(user=user, content=content)
